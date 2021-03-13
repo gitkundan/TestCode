@@ -1,51 +1,51 @@
-﻿2021-03-13 14:06:47      Execution started.
-2021-03-13 14:06:47      QlikView Desktop Version      12.30.20000+2018-10-29 08:23:46+27435c8
-2021-03-13 14:06:47      CPU Target                    x64
-2021-03-13 14:06:47      Operating System              Windows 10 Pro  (64 bit edition)
-2021-03-13 14:06:47      Wow64 mode                    Not using Wow64
-2021-03-13 14:06:47      Language                      0809 English English
-2021-03-13 14:06:47      Country                       GBR United Kingdom United Kingdom
-2021-03-13 14:06:47      MDAC Version                  6.3.9600.16384
-2021-03-13 14:06:47      MDAC Full Install Version     6.3.9600.16384
-2021-03-13 14:06:47      PreferredCompression          2
-2021-03-13 14:06:47      EnableParallelReload          1
-2021-03-13 14:06:47      ParallelizeQvdLoads           1
-2021-03-13 14:06:47      AutoSaveAfterReload           0
-2021-03-13 14:06:47      BackupBeforeReload            1
-2021-03-13 14:06:47      EnableFlushLog                0
-2021-03-13 14:06:47      SaveInfoWhenSavingFile        0
-2021-03-13 14:06:47      UserLogfileCharset            65001
-2021-03-13 14:06:47      OdbcLoginTimeout              -1
-2021-03-13 14:06:47      OdbcConnectionTimeout         -1
-2021-03-13 14:06:47      LongestPossibleLine           1048576
-2021-03-13 14:06:47      MaxCoreMask                   -1
-2021-03-13 14:06:47      ScriptWantsDbWrite            false
-2021-03-13 14:06:47      ScriptWantsExe                false
-2021-03-13 14:06:47      ICU_FOR_CHARACTER_CLASSIFICATION true
-2021-03-13 14:06:47      ICU_FOR_CODE_PAGES            true
-2021-03-13 14:06:47      ICU_FOR_COLLATION             true
-2021-03-13 14:06:47      ICU_FOR_LOCALE_INFO           true
-2021-03-13 14:06:47      ICU_FOR_SUPPORT_INFO          true
-2021-03-13 14:06:47      ICU_FOR_TIME_ZONE_INFO        true
-2021-03-13 14:06:47      LogFile CodePage Used:        65001
-2021-03-13 14:06:47      UseMemoryFillPattern          1
-2021-03-13 14:06:47      ScriptMode                    Legacy (gives greater system access) (aka qv11 mode)
-2021-03-13 14:06:47      SequentialThreadCount         30
-2021-03-13 14:06:47      NumberOfCores (effective)     8
-2021-03-13 14:06:47      ReloadCodebase                Bnf
-2021-03-13 14:06:47      Reload Executed By            DESKTOP-6RG4GGM\John
-2021-03-13 14:06:47      Process Executing             QlikView Desktop
-2021-03-13 14:06:47      Process ID                    8484
-2021-03-13 14:06:47      Grpc version                  5.0.0
-2021-03-13 14:06:47      Protobuf version              3.4.0
-2021-03-13 14:06:47 0002 SET GenerateRandomNumber ='Round(Rand()*($2-$1)+$1,$3)'
-2021-03-13 14:06:47 0010 DataSet:
-2021-03-13 14:06:47 0011 Load
-2021-03-13 14:06:47 0012     RowNo() as ProductNumber
-2021-03-13 14:06:47 0013     ,Round(Rand()*(100-1)+1,1) as Weight
-2021-03-13 14:06:47 0014     ,Round(Rand()*(15-10)+10,0.01) as ShippingCost
-2021-03-13 14:06:47 0015 Autogenerate(10)
-2021-03-13 14:06:47      	3 fields found: ProductNumber, Weight, ShippingCost, 
-2021-03-13 14:06:47      10 lines fetched
-2021-03-13 14:06:47 0017 exit script
-2021-03-13 14:06:47      Execution finished.
+﻿2021-03-13 14:14:24      Execution started.
+2021-03-13 14:14:24      QlikView Desktop Version      12.30.20000+2018-10-29 08:23:46+27435c8
+2021-03-13 14:14:24      CPU Target                    x64
+2021-03-13 14:14:24      Operating System              Windows 10 Pro  (64 bit edition)
+2021-03-13 14:14:24      Wow64 mode                    Not using Wow64
+2021-03-13 14:14:24      Language                      0809 English English
+2021-03-13 14:14:24      Country                       GBR United Kingdom United Kingdom
+2021-03-13 14:14:24      MDAC Version                  6.3.9600.16384
+2021-03-13 14:14:24      MDAC Full Install Version     6.3.9600.16384
+2021-03-13 14:14:24      PreferredCompression          2
+2021-03-13 14:14:24      EnableParallelReload          1
+2021-03-13 14:14:24      ParallelizeQvdLoads           1
+2021-03-13 14:14:24      AutoSaveAfterReload           0
+2021-03-13 14:14:24      BackupBeforeReload            1
+2021-03-13 14:14:24      EnableFlushLog                0
+2021-03-13 14:14:24      SaveInfoWhenSavingFile        0
+2021-03-13 14:14:24      UserLogfileCharset            65001
+2021-03-13 14:14:24      OdbcLoginTimeout              -1
+2021-03-13 14:14:24      OdbcConnectionTimeout         -1
+2021-03-13 14:14:24      LongestPossibleLine           1048576
+2021-03-13 14:14:24      MaxCoreMask                   -1
+2021-03-13 14:14:24      ScriptWantsDbWrite            false
+2021-03-13 14:14:24      ScriptWantsExe                false
+2021-03-13 14:14:24      ICU_FOR_CHARACTER_CLASSIFICATION true
+2021-03-13 14:14:24      ICU_FOR_CODE_PAGES            true
+2021-03-13 14:14:24      ICU_FOR_COLLATION             true
+2021-03-13 14:14:24      ICU_FOR_LOCALE_INFO           true
+2021-03-13 14:14:24      ICU_FOR_SUPPORT_INFO          true
+2021-03-13 14:14:24      ICU_FOR_TIME_ZONE_INFO        true
+2021-03-13 14:14:24      LogFile CodePage Used:        65001
+2021-03-13 14:14:24      UseMemoryFillPattern          1
+2021-03-13 14:14:24      ScriptMode                    Legacy (gives greater system access) (aka qv11 mode)
+2021-03-13 14:14:24      SequentialThreadCount         30
+2021-03-13 14:14:24      NumberOfCores (effective)     8
+2021-03-13 14:14:24      ReloadCodebase                Bnf
+2021-03-13 14:14:24      Reload Executed By            DESKTOP-6RG4GGM\John
+2021-03-13 14:14:24      Process Executing             QlikView Desktop
+2021-03-13 14:14:24      Process ID                    8484
+2021-03-13 14:14:24      Grpc version                  5.0.0
+2021-03-13 14:14:24      Protobuf version              3.4.0
+2021-03-13 14:14:24 0002 SET GenerateRandomNumber ='Round(Rand()*($2-$1)+$1,$3)'
+2021-03-13 14:14:24 0010 DataSet:
+2021-03-13 14:14:24 0011 Load
+2021-03-13 14:14:24 0012     RowNo() as ProductNumber
+2021-03-13 14:14:24 0013     ,Round(Rand()*(100-1)+1,1) as Weight
+2021-03-13 14:14:24 0014     ,Round(Rand()*(15-10)+10,0.01) as ShippingCost
+2021-03-13 14:14:24 0015 Autogenerate(10)
+2021-03-13 14:14:24      	3 fields found: ProductNumber, Weight, ShippingCost, 
+2021-03-13 14:14:24      10 lines fetched
+2021-03-13 14:14:24 0017 exit script
+2021-03-13 14:14:24      Execution finished.

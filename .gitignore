@@ -1,2 +1,5 @@
 # Qlikview app
 *.qvw
+
+#Log
+*.log

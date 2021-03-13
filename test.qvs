@@ -3,9 +3,23 @@
 /*
 Generate mock data -- data on the rocks
 Source : https://dataonthe.rocks/data-generator/
+https://dataonthe.rocks/gradient-descent/
 */
-SET GenerateRandomNumber ='Round(Rand()*($2-$1)+$1,$3)';
-//create a random integer between 1 and 100 is $(GenerateRandomNumber(1,100,1))
+LET NoOfLearningRows=500;
+LET NoOfTestingRows=500;
+LET RandomVariationSize = 0.5;
+LET HighestInteger=2;
+LET LowestInteger=-2;
+LET FeaturePrecision=0.01;
+LET HighestWeight=5;
+LET LowestWeight=-5;
+LET WeightPrecision=0.1;
+SET GenerateRandomNumber ='Round(Rand()*($2-$1)+$1,$3)'; //create a random integer between 1 and 100 is $(GenerateRandomNumber(1,100,1))
+SET LinearHypothesis = '((X0*θ0) + (X1*θ1))';
+LET initialθ0=$(GenerateRandomNumber($(LowestWeight),$(HighestWeight),$(WeightPrecision)));
+LET initialθ1=$(GenerateRandomNumber($(LowestWeight),$(HighestWeight),$(WeightPrecision)));
+SET GaussianRandom = $(GenerateRandomNumber(-0.5,0.5,0.1)) * sqrt(-2*log(rand())) * cos(2* pi() * rand());
+
 
 DataSet:
 Load
