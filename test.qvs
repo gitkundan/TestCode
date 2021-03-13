@@ -1,0 +1,261 @@
+// git clone https://github.com/gitkundan/TestCode.git
+
+/*
+Generate mock data -- data on the rocks
+Source : https://dataonthe.rocks/data-generator/
+*/
+SET GenerateRandomNumber ='Round(Rand()*($2-$1)+$1,$3)';
+//create a random integer between 1 and 100 is $(GenerateRandomNumber(1,100,1))
+
+DataSet:
+Load
+    RowNo() as ProductNumber
+    ,$(GenerateRandomNumber(1,100,1)) as Weight
+    ,$(GenerateRandomNumber(10,15,0.01)) as ShippingCost
+Autogenerate(10); //how many rows you want to generate
+
+exit script;
+//Denominator = Sum(Flag_Denominator_MetricApp_Unique) insted of count(distinct AppId)
+//Numerator = Sum(Flag_Numerator_MetricApp_Unique)
+temp:
+//Table Grain is AppId
+LOAD
+    AppId //join key --calculation based on this for AppId Metrics
+    ,1 as Flag_Denominator_MetricApp //grain of calculation - attribute for Denominator
+    ,App_Compliance as Flag_Numerator_MetricApp //attribute for Numerator //values = 0 or 1 - Need to be 1 for whatever the metric calculation is asking
+FROM
+[C:\Users\John\Downloads\Qlikview_Testing.xlsx] (ooxml, embedded labels, table is AppId);
+
+Left Join (temp)
+LOAD 
+    AppId //join key
+    ,LE_Id
+FROM
+[C:\Users\John\Downloads\Qlikview_Testing.xlsx] (ooxml, embedded labels, table is LE);
+
+
+/*Design
+(1) History table stores values as key value pairs i.e. changes in any field under change
+    tracking generates rows
+(xx)    History table is sorted chornologically - top row is most recent change
+(2) Ignore OldValue as older value not needed - so previous HCP row is the older value
+(3) History tracking enabled mid-project: so two classes of HCP - HCP with no changes and HCP with changes
+(3) For each field under change control:
+    (i) Pickup the rows where NewValue is present
+
+Examples: AccountId: 0011t00000g2eVMAAY, 0011t000005usVYAAY
+
+//TODO: Find examples of HCP present in History but not in Account
+
+ETL Logic: (1) Get snapshot Account table before history started
+(2) Make the changes via Histiry table; output is the present Account table
+
+If the hcp is deleted then the record will exist in history table but not in account table; but name
+,recordtypeid,valore values and other non-chnage tracked attributes wont be there in history
+
+*/
+set NullValue = 'NULL';
+NullAsValue OldValue, NewValue,Target_Level__c;
+Let vProjectStartDate = Date#('01/01/2019','DD/MM/YYYY');
+
+tempAccountHistory1:
+Noconcatenate Load Distinct
+    AccountId,
+    CreatedDate,
+    Date(Floor(CreatedDate)) as EffectiveDateTemp,
+    // OldValue,
+    NewValue as NewValueTemp
+FROM [C:\Users\John\Downloads\GSK\AccountHistory.qvd] (qvd)
+Where IsDeleted = 0
+And AccountId = '0011t00000PcSw6AAF'
+And Field = 'Target_Level__c'
+;
+
+//Earliest Change first now
+//Multiple changes in one day - only pickup the most recent change
+//Show me the Target Level for each Account - Date combination -- Date added because multiple records per HCP in the same date
+AccountHistory:
+Noconcatenate Load Distinct
+    AccountId,
+    EffectiveDateTemp,
+    LastValue(EffectiveDateTemp) as EffectiveDate,
+    LastValue(NewValueTemp) as NewValue
+Resident tempAccountHistory1
+Group By AccountId, EffectiveDateTemp
+Order By CreatedDate asc
+;
+Drop Table tempAccountHistory1;
+Drop Field EffectiveDateTemp;
+
+//Intial Acount table load
+Concatenate Load Distinct
+    Id as AccountId,
+    Target_Level__c as NewValue,
+    If(CreatedDate > $(vProjectStartDate),Date(Floor(CreatedDate)),Date($(vProjectStartDate))) as EffectiveDate//some HCPs might exist before project start date - they will be initialised to project start date
+FROM [C:\Users\John\Downloads\GSK\Account_initial_asof_06_June.qvd] (qvd)
+Where IsDeleted = 0
+And Id = '0011t00000PcSw6AAF'
+;
+
+//Add one row per HCP with today's date as last row
+Concatenate Load Distinct
+    Id as AccountId,
+    Target_Level__c as NewValue,
+    Date(Floor(Today())) as EffectiveDate
+FROM [C:\Users\John\Downloads\GSK\Account_initial_asof_06_June.qvd] (qvd)
+Where IsDeleted = 0
+And Id = '0011t00000PcSw6AAF'
+;
+
+AccountConsolidated:
+Load *
+Where Not IsNull(tempNewValue);
+Noconcatenate Load Distinct
+    AccountId,
+    Previous(NewValue) as tempNewValue,
+    Previous(EffectiveDate) +1 as FromDate,
+    EffectiveDate as EndDate
+Resident AccountHistory
+Order By AccountId, EffectiveDate asc
+;
+Drop Table AccountHistory;
+//To be done contactenate load of hcps not in account history
+
+//finrd out the start date and end date and run loop
+//get the oldvalue as the earlier date value
+//bcoz there is not starting HCP table History table may have Ids not present in Account table
+
+//ToDo:
+//Explode into individual dates
+
+AccountWithHistory:
+Load
+    AccountId,
+    tempNewValue as NewValue,    
+    IterNo() as IterNo,
+    FromDate + IterNo() -1  as DateId
+Resident AccountConsolidated
+While IterNo() <= EndDate - FromDate +1;
+
+Drop Table AccountConsolidated;
+Store AccountWithHistory into [C:\Users\John\Downloads\GSK\AccountWithHistory.qvd] (qvd);
+
+exit script;
+//Derive an older account table
+History:
+Load
+    Min(CreatedDate) as tempMinDate
+FROM [C:\Users\John\Downloads\GSK\AccountHistory.qvd] (qvd)
+;
+
+Let vLastModifiedDate = Peek('tempMinDate');
+Drop Table  History;
+
+Account:
+//HACK - do not use in PROD: Generate an initial starting position of Account table
+Load *
+FROM [C:\Users\John\Downloads\GSK\Account.qvd] (qvd)
+Where CreatedDate < $(vLastModifiedDate);
+
+Store Account into [C:\Users\John\Downloads\GSK\Account_initial_asof_06_June.qvd] (qvd);
+// Drop Table Account;
+exit script;
+
+
+
+
+Test:
+
+LOAD RecNo() as RecNo, html_field inline [
+
+html_field
+
+'<span test="test" __test_macro="testmac" class="test_macro" src="test.gif"></span></p></body>'
+
+];
+
+Test2:
+Noconcatenate Load *
+, '<' & SubField(html_field,'<') as expression
+,TextBetween('<' & SubField(html_field, '<'),'<','>') as TextBetween
+,'<' & TextBetween('<' & SubField(html_field, '<'),'<','>') & '>' as HtmlTag
+
+Resident Test;
+Drop Table Test;
+exit script;
+
+'<body><p>Hello!</p><p></p><p>DATA TEST DATA TEST </p><p></p><p>TESTING THIS OTHER SEGMENT.</p><p> also this one in lower case</p><p></p><p>lots of different types of html tags <span test="test" __test_macro="testmac" class="test_macro" src="test.gif"></span></p></body>'
+
+
+HtmlTag_Map:
+
+MAPPING LOAD DISTINCT '<' & TextBetween('<' & SubField(html_field, '<'),'<','>') & '>' as HtmlTag, '' as Substitute
+
+Resident Test;
+
+
+JOIN(Test) LOAD RecNo, MapSubstring('HtmlTag_Map', html_field) as Field_Cleansed
+
+Resident Test;
+
+exit script;
+
+// $(Must_Include=C:\Users\John\Downloads\QVC\Qlikview-Components-11.2\qvc_runtime\qvc.qvs);
+
+//Derive HCP_Id from ATL Id - use this in ATL history table which has ATL Id
+ATL_HCP_Id:
+Mapping Load
+    Id
+    ,[Account_vod__c]
+FROM [C:\Users\John\Downloads\GSK\Data\Account_Territory_Loader_vod__c.qvd] (qvd)
+Where IsDeleted = 0
+;
+
+//History table stores values as key pair values i.e. changes in fields in the ATL generate rows
+//ignore OldValue as we do not need to know the older value
+//Load HCP - Territory Association after history switch
+ATL_History:
+Load
+    ParentId
+    ,Applymap('ATL_HCP_Id', ParentId,Null()) as HCP_Id
+    ,Date(Floor(CreatedDate), 'DD/MM/YYYY') as Date
+    ,PurgeChar(NewValue,';Whitespace') as Territory_Id       //this is the name of the new territory
+FROM [C:\Users\John\Downloads\GSK\Data\Account_Territory_Loader_vod__History.qvd] (qvd)
+Where Field = 'Territory_To_Add_vod__c'
+And Not IsNull(NewValue)
+And IsDeleted = 0
+;
+
+//Load ATL prior to history switch
+Concatenate Load
+    [Account_vod__c] as HCP_Id
+    ,PurgeChar([Territory_vod__c],';Whitespace') as Territory_Id
+    ,Date(Floor(LastModifiedDate ),'DD/MM/YYYY') as Date
+FROM [C:\Users\John\Downloads\GSK\Data\Account_Territory_Loader_vod__c.qvd] (qvd)
+Where Not Exists(ParentId,Id)
+And IsDeleted = 0
+;
+
+ATL:
+Load *
+Where Len(Trim(Territory_Id)) <> 0 
+;
+Noconcatenate Load Distinct
+    Date
+    ,HCP_Id
+    ,Territory_Id
+Resident ATL_History
+Order By 
+    Date
+    ,HCP_Id
+    ,Territory_Id
+;
+Drop Tables ATL_History;
+
+//Explode this table to derive date-HCP relationship
+//If the same HCP is re-assigned territory in the same day twice then only the latest change noted
+//Check HCP who have no territory assigned (whitespace) have any calls made against them
+
+Store ATL into [C:\Users\John\Downloads\GSK\Data\ATL.qvd] (qvd);
+
+exit script;
